@@ -19,6 +19,7 @@ class CreateCustomersTable extends Migration
             $table->string('instansi');
             $table->string('email')->unique();
             $table->string('no_wa')->unique();
+            $table->string('konfirmasi');
             $table->rememberToken();
             $table->timestamps();
         });

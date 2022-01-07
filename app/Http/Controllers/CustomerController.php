@@ -7,6 +7,8 @@ use App\Models\Customer;
 use App\Models\Feedback;
 use App\Models\KategoriSubscriber;
 
+use Mail;
+
 class CustomerController extends Controller
 {
     /**
@@ -52,6 +54,7 @@ class CustomerController extends Controller
             $customer->instansi = $request[1]['instansi'];
             $customer->email = $request[1]['email'];
             $customer->no_wa = $request[1]['noWa'];
+            // $customer->konfirmasi = 0;
             $customer->save();
 
             foreach ($request[1]['kategori'] as $kategori => $value) {
@@ -70,7 +73,16 @@ class CustomerController extends Controller
             $feedback->rujukan = $request[0]['rujukan'];
             $feedback->customer_id = $customer->id;
             $feedback->save();
-        }
+
+            // $data = array('name'=>$customer->nama, 'id'=>$customer->id);
+
+            // Mail::send(['html'=>'mailkonfirm'], $data, function($message)  use ($request, $customer) {
+            //     $message->to($customer->email, $customer->nama)->subject($request->judul);
+            //     $message->from('dispo7200@gmail.com','Norita - BPS Prvosinsi Sulawesi Tengah');
+            // });
+
+            // dd($customer);
+        }else{
             $feedback = new Feedback;
             $feedback->kualitas_data = $request[0]['kualitasData'];
             $feedback->pelayanan_data = $request[0]['pelayananData'];
@@ -78,7 +90,30 @@ class CustomerController extends Controller
             $feedback->sarana_prasarana =  $request[0]['saranaPrasarana'];
             $feedback->rujukan = $request[0]['rujukan'];
             $feedback->save();
-        
+        }
+        // return Inertia::render('Feedback2');
+        return redirect('/feedback');
+    }
+
+    public function storeForm(Request $request)
+    {
+        // dd($request[0]['nama']);
+        $customer = new Customer;
+        $customer->nama = $request[0]['nama'];
+        $customer->instansi = $request[0]['instansi'];
+        $customer->email = $request[0]['email'];
+        $customer->no_wa = $request[0]['noWa'];
+        // $customer->konfirmasi = 0;
+        $customer->save();
+
+        foreach ($request[0]['kategori'] as $kategori => $value) {
+        # code...
+            $kategoriSubscriber = new KategoriSubscriber;
+            $kategoriSubscriber->kategori = $value['value'];
+            $kategoriSubscriber->customer_id = $customer->id;
+            $kategoriSubscriber->save();
+        }
+        return redirect('/formregister');
     }
 
     /**

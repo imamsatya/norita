@@ -17,7 +17,7 @@
         "laravel/sanctum": "^2.6",
         "laravel/tinker": "^2.5",
         "tightenco/ziggy": "^1.0",
-        "twilio/sdk": "^6.18"
+        "twilio/sdk": "^6.24"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

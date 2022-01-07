@@ -1,31 +1,39 @@
 <template>
     <div>
-        <div class="p-fluid text-gray-600">
+        <div class="p-fluid text-white">
             <Toast />
             <Toast position="top-left" group="tl" />
             <Toast position="bottom-left" group="bl" />
             <Toast position="bottom-right" group="br" />
             <div class="p-field p-grid">
-                <label for="firstname" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0 ">Judul</label>
+                <label for="firstname" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0 ">Judul Publikasi</label>
                 <div class="p-col-9 p-md-7">
-                  <CascadeSelect v-model="selectedCity" :options="countries" optionLabel="cname" optionGroupLabel="name" 
-                        :optionGroupChildren="['states', 'cities']" style="minWidth: 14rem" />
-                    <MultiSelect :filter="true" v-model="selectedGroupedCities" :options="groupedCities" optionLabel="label"
+
+
+                    <!-- <MultiSelect :filter="true" v-model="selectedGroupedCities" :options="kategoriOptions2" optionLabel="label"
                         optionGroupLabel="label" optionGroupChildren="items">
-                    </MultiSelect>
-                    <InputText v-model="ruleForm.judul" type="text" :class="classForm.judul"
-                        @input="changeJudulInput()" />
+                    </MultiSelect> -->
+
+                    <CascadeSelect v-model="selectedJudul" :class="classForm.judul" :options="kategoriOptions3"
+                        optionLabel="cname" optionGroupLabel="kategori" :optionGroupChildren="['judulKategori']"
+                        style="maxWidth: 25rem" placeholder="Pilih Judul Publikasi" />
                     <small v-if="classForm.judul == 'p-invalid' " id="username2-help" class="p-error">Silakan masukkan
-                        judul</small>
+                        judul publikasi</small>
+
+
+
+                    <!-- <InputText v-model="ruleForm.judul" type="text" :class="classForm.judul"
+                         />
+                    <small v-if="classForm.judul == 'p-invalid' " id="username2-help" class="p-error">Silakan masukkan
+                        judul</small> -->
 
                 </div>
                 <div class="p-col-3 p-md-3 ">
                     <span class="p-float-label">
-                        <InputText id="inputtext" type="text" v-model="value1" />
+                        <InputText id="inputtext" type="text" v-model="keteranganTambahanJudul" />
                         <label for="inputtext">Keterangan Tambahan Judul</label>
                     </span>
-                    <small v-if="classForm.judul == 'p-invalid' " id="username2-help" class="p-error">Silakan masukkan
-                        judul</small>
+
 
                 </div>
             </div>
@@ -53,23 +61,30 @@
                     <small v-if="classForm.link == 'p-invalid' " id="username2-help" class="p-error">Silakan masukkan link</small>
                 </div>
             </div>
-            <div class="p-field p-grid">
+            <!-- <div class="p-field p-grid">
                 <label for="lastname" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kategori</label>
                 <div class="p-col-12 p-md-10">
                     
                     <MultiSelect v-model="ruleForm.kategori" :filter="true" :options="kategoriOptions" optionLabel="kategori" placeholder="Kategori" display="chip" :class="classForm.kategori" @change="changeKategoriInput()"/>
-                    <!-- <InputText v-model="ruleForm.kategori" :class="classForm.kategori" type="text" /> -->
+                    
                     <small v-if="classForm.kategori == 'p-invalid' " id="username2-help" class="p-error">Silakan masukkan kategori</small>
                 </div>
-            </div>   
+            </div>    -->
         </div>  
         <br>
         <br>
  
         <div class="p-d-flex p-jc-center">
-            <div class="p-mr-2"><Button label="Reset" @click="resetForm2()" icon="pi pi-spinner" iconPos="left" class="p-button-outlined p-d-block p-mx-auto" /> </div>
-            <div><Button @click="submitForm2(ruleForm)" label="Submit" icon="pi pi-send" iconPos="left" class="p-d-block p-mx-auto" /> </div>
+            <div  class="p-mr-2"><Button :disabled="disabled" label="Reset" @click="resetForm2()" icon="pi pi-spinner" iconPos="left" class="p-button-outlined p-d-block p-mx-auto" /> </div>
+            <div><Button :disabled="disabled" @click="submitForm2(ruleForm)" label="Submit" icon="pi pi-send" iconPos="left" class="p-d-block p-mx-auto " /> </div>
         </div>
+      <Dialog header="Tunggu Ya" :visible="loading" >
+	<ProgressSpinner />
+</Dialog>
+	 
+
+
+       
 
     </div>
 
@@ -79,7 +94,9 @@
   export default {
     data() {
       return {
-        selectedCity: null,
+          disabled: null,
+          loading: false,
+        selectedKategori3: null,
             countries: [
                 {
                     name: 'Australia',
@@ -156,34 +173,143 @@
                     ]
                 }
             ],
-        selectedGroupedCities: null,
-            groupedCities: [{
-                label: 'Germany', code: 'DE', 
+            selectedKategori: null,
+            kategoriOptions3: [
+                {kategori: 'Umum',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Provinsi Sulawesi Tengah Dalam Angka', kategori: 'Umum'},
+                                {cname: 'Statistik Daerah Provinsi Sulawesi Tengah', kategori: 'Umum'},
+                                {cname: 'Katalog Publikasi BPS Provinsi Sulawesi Tengah', kategori: 'Umum'},
+                                {cname: 'Indikator Makro Sosial Ekonomi Provinsi Sulawesi Tengah', kategori: 'Umum'}
+                            ]
+                },
+                {kategori: 'Produk Domestik Regional Bruto',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Produk Domestik Regional Bruto Provinsi Sulawesi Tengah Menurut Lapangan Usaha', kategori: 'Produk Domestik Regional Bruto'},
+                                {cname: 'Produk Domestik Regional Bruto Provinsi Sulawesi Tengah Menurut Pengeluaran', kategori: 'Produk Domestik Regional Bruto'},
+                                {cname: 'Produk Domestik Regional Bruto Kabupaten/Kota di Sulawesi Tengah Menurut Lapangan Usaha', kategori: 'Produk Domestik Regional Bruto'},
+                                {cname: 'Berita Resmi Statistik Pertumbuhan Ekonomi Provinsi Sulawesi Tengah', kategori: 'Produk Domestik Regional Bruto'}
+                            ]
+                },
+                {kategori: 'Nilai Tukar Petani',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Nilai Tukar Petani Provinsi Sulawesi Tengah', kategori: 'Nilai Tukar Petani'},
+                                {cname: 'Berita Resmi Statistik Nilai Tukar Petani Provinsi Sulawesi Tengah', kategori: 'Nilai Tukar Petani'},
+                            ]
+                },
+                {kategori: 'Inflasi',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Statistik Harga Konsumen Provinsi Sulawesi Tengah', kategori: 'Inflasi'},
+                                {cname: 'Berita Resmi Statistik Inflasi Gabungan Dua Kota di Provinsi Sulawesi Tengah', kategori: 'Inflasi'},
+                            ]
+                },
+                  {kategori: 'Kependudukan',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Statistik Kependudukan Provinsi Sulawesi Tengah', kategori: 'Kependudukan'},
+                            ]
+                },
+                {kategori: 'Tenaga Kerja',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Indikator Ketenagakerjaan Provinsi Sulawesi Tengah', kategori: 'Tenaga Kerja'},
+                                {cname: 'Berita Resmi Statistik Keadaan Ketenagakerjaan Provinsi Sulawesi Tengah', kategori: 'Tenaga Kerja'},
+                            ]
+                },
+                {kategori: 'Ekspor-Impor',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Statistik Perdagangan Luar Negeri Provinsi Sulawesi Tengah', kategori: 'Ekspor-Impor'},
+                                {cname: 'Berita Resmi Statistik Ekspor Impor Provinsi Sulawesi Tengah', kategori: 'Ekspor-Impor'},
+                            ]
+                },                
+                {kategori: 'Sosial',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Statistik Perumahan dan Konsumsi Rumah Tangga Provinsi Sulawesi Tengah', kategori: 'Sosial'},
+                                {cname: 'Statistik Politik dan Keamanan Provinsi Sulawesi Tengah', kategori: 'Sosial'},
+                                {cname: 'Indikator Kesejahteraan Rakyat Provinsi Sulawesi Tengah', kategori: 'Sosial'},
+                                {cname: 'Statistik Kesejahteraan Rakyat Provinsi Sulawesi Tengah', kategori: 'Sosial'},
+
+                            ]
+                },
+                {kategori: 'Transportasi',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Statistik Perhubungan Provinsi Sulawesi Tengah', kategori: 'Transportasi'},
+                            ]
+                },
+                {kategori: 'Pertanian',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Statistik Pemotongan Ternak Provinsi Sulawesi Tengah', kategori: 'Pertanian'},
+                                {cname: 'Indikator Pertanian Provinsi Sulawesi Tengah', kategori: 'Pertanian'},
+                                {cname: 'Luas Panen dan Produksi Padi Provinsi Sulawesi Tengah', kategori: 'Pertanian'},
+                                {cname: 'Berita Resmi Statistik Luas Panen dan Produksi Padi di Provinsi Sulawesi Tengah', kategori: 'Pertanian'},
+                            ]
+                },
+                {kategori: 'Industri',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Direktori Perusahaan Konstruksi Provinsi Sulawesi Tengah', kategori: 'Industri'},
+                                {cname: 'Direktori Industri Manufaktur Besar dan Sedang Provinsi Sulawesi Tengah', kategori: 'Industri'},
+                                {cname: 'Statistik Industri Besar dan Sedang Provinsi Sulawesi Tengah', kategori: 'Industri'},
+                            ]
+                },
+                {kategori: 'Pariwisata',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Statistik Perhotelan Provinsi Sulawesi Tengah', kategori: 'Pariwisata'},
+                                {cname: 'Berita Resmi Statistik Tingkat Penggunaan Sarana Akomodasi dan Transportasi di Sulawesi Tengah', kategori: 'Pariwisata'},
+                            ]
+                },
+                {kategori: 'Indeks Pembangunan Manusia',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Indeks Pembangunan Manusia Provinsi Sulawesi Tengah', kategori: 'Indeks Pembangunan Manusia'},
+                                {cname: 'Berita Resmi Statistik Indeks Pembangunan Manusia', kategori: 'Indeks Pembangunan Manusia'},
+                            ]
+                },
+                {kategori: 'Potensi Desa',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Berita Resmi Statistik Potensi Desa di Sulawesi Tengah', kategori: 'Potensi Desa'},
+                            ]
+                },
+                {kategori: 'Kemiskinan',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Berita Resmi Statistik Profil Kemiskinan di Sulawesi Tengah', kategori: 'Kemiskinan'},
+                                {cname: 'Berita Resmi Statistik Gini Ratio Sulawesi Tengah', kategori: 'Kemiskinan'},
+                            ]
+                },
+                {kategori: 'Lainnya',
+                    code: 'AU',
+                    judulKategori: [
+                                {cname: 'Statistik Keuangan Daerah Provinsi Sulawesi Tengah', kategori: 'Lainnya'},
+                                {cname: 'Statistik Air Bersih Provinsi Sulawesi Tengah', kategori: 'Lainnya'},
+                            ]
+                }
+
+                
+
+
+                
+                ],
+            kategoriOptions2:[{
+                label: 'Umum', code: 'DE', 
                 items: [
-                    {label: 'Berlin', value: 'Berlin'},
-                    {label: 'Frankfurt', value: 'Frankfurt'},
+                    {label: 'Provinsi Sulawesi Tengah Dalam Angka', value: 'Berlin'},
+                    {label: 'Statistik Daerah Provinsi Sulawesi Tengah', value: 'Frankfurt'},
                     {label: 'Hamburg', value: 'Hamburg'},
                     {label: 'Munich', value: 'Munich'}
                 ]
-            },
-            {
-                label: 'USA', code: 'US', 
-                items: [
-                    {label: 'Chicago', value: 'Chicago'},
-                    {label: 'Los Angeles', value: 'Los Angeles'},
-                    {label: 'New York', value: 'New York'},
-                    {label: 'San Francisco', value: 'San Francisco'}
-                ]
-            },
-            {
-                label: 'Japan', code: 'JP', 
-                items: [
-                    {label: 'Kyoto', value: 'Kyoto'},
-                    {label: 'Osaka', value: 'Osaka'},
-                    {label: 'Tokyo', value: 'Tokyo'},
-                    {label: 'Yokohama', value: 'Yokohama'}
-                ]
             }],
+       
         kategoriOptions: [
 			{kategori: 'Inflasi', value: 'Inflasi'},
 			{kategori: 'Tenaga Kerja', value: 'Tenaga Kerja'},
@@ -203,6 +329,7 @@
       {kategori: 'Potensi Desa', value: 'Potensi Desa'},
       {kategori: 'Lainnya', value: 'Lainnya'},
 		],
+        keteranganTambahanJudul: null,
          classForm: {
           judul: '',
           abstrak: '',
@@ -210,6 +337,7 @@
           link: '',
           kategori: '',
         },
+        selectedJudul: null,
         ruleForm: {
           judul: null,
           abstrak: null,
@@ -255,6 +383,12 @@
         this.classForm.kategori = null      
       },
         submitForm2(ruleForm) {
+            console.log('selectedJudul', this.selectedJudul)
+             this.ruleForm.judul = this.selectedJudul
+             if (this.ruleForm.judul !== null){
+             this.ruleForm.kategori = this.selectedJudul.kategori
+             }
+             
          if (
              this.ruleForm.judul !== null &&
         this.ruleForm.abstrak !== null &&
@@ -262,9 +396,15 @@
         this.ruleForm.link !== null &&
         this.ruleForm.kategori.length !==  0
          ) {
+             this.ruleForm.judul = this.ruleForm.judul.cname + ' ' + this.keteranganTambahanJudul
+             console.log('ruleForm.judul', this.ruleForm.judul.cname)
           this.$inertia.post('/submitform', this.ruleForm, {
 
-                        onStart: () => this.sending = true,
+                        onStart: () => {
+                            this.loading = true,
+                            this.sending = true,
+                            this.disabled = 'disabled'
+                        },
                         onProgress: (progressEvent) => {
                             //DATA TERSEBUT AKAN DI ASSIGN KE VARIABLE progressBar
                             this.progressBar = parseInt(Math.round((progressEvent.loaded * 100) /
@@ -277,15 +417,27 @@
                             // Handle success event
                             console.log('onSuccess', response)
                             this.$toast.add({severity:'success', summary: 'Yeay, Berhasil', detail:'Pesan Berhasil Dikirim', life: 3000});
+                            this.loading = false,
+                            this.sending = false,
+                            this.disabled =null 
                         },
                         onError: (errors) => {
                             // Handle validation errors
                             console.log('onError', errors)
+                            this.loading = false,
+                            this.sending = false,
+                            this.disabled = null 
                         },
-                        onFinish: () => this.sending = false,
+                        onFinish: () =>{
+                             this.loading = false,
+                            this.sending = false,
+                            this.disabled = null 
+                        } 
                     })   
                    
-                     
+                    //   this.loading = false,
+                    //         this.sending = false,
+                    //         this.disabled = '' 
                   
          }
          else{
@@ -317,38 +469,45 @@
        
         
       },
-      async submitForm(formName) {
+    //   async submitForm(formName) {
+          
+    //       console.log(this.loading, 'loading true')
+    //     await this.$refs[formName].validate((valid) => {
+    //       if (valid) {
+    //         this.$inertia.post('/submitform', this.ruleForm, {
+                    
+    //                     onStart: () => {
+    //                         this.sending = true,     this.loading = true},
 
-        await this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.$inertia.post('/submitform', this.ruleForm, {
+    //                     onProgress: (progressEvent) => {
+    //                         //DATA TERSEBUT AKAN DI ASSIGN KE VARIABLE progressBar
+    //                         this.progressBar = parseInt(Math.round((progressEvent.loaded * 100) /
+    //                             progressEvent.total))
+    //                         console.log(progressEvent.loaded)
+    //                         console.log('Upload Progress: ', this.progressBar)
+    //                     },
 
-                        onStart: () => this.sending = true,
-                        onProgress: (progressEvent) => {
-                            //DATA TERSEBUT AKAN DI ASSIGN KE VARIABLE progressBar
-                            this.progressBar = parseInt(Math.round((progressEvent.loaded * 100) /
-                                progressEvent.total))
-                            console.log(progressEvent.loaded)
-                            console.log('Upload Progress: ', this.progressBar)
-                        },
-
-                        onSuccess: (response) => {
-                            // Handle success event
-                            console.log('onSuccess', response)
-                        },
-                        onError: (errors) => {
-                            // Handle validation errors
-                            console.log('onError', errors)
-                        },
-                        onFinish: () => this.sending = false,
-                    })    
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+    //                     onSuccess: (response) => {
+    //                         // Handle success event
+    //                         console.log('onSuccess', response)
+    //                     },
+    //                     onError: (errors) => {
+    //                         // Handle validation errors
+    //                         console.log('onError', errors)
+    //                     },
+    //                     onFinish: () =>{
+    //                          this.sending = false,
+    //                         this.loading = false
+    //                     }
+    //                 })    
+    //       } else {
+    //         console.log('error submit!!');
+    //         return false;
+    //       }
+    //       console.log(this.loading, 'loading false')
+    //     });
         
-      },
+    //   },
        
       resetForm(formName) {
         this.$refs[formName].resetFields();
@@ -365,6 +524,7 @@
         this.classForm.infografis = null
         this.classForm.link = null
         this.classForm.kategori = null
+        this.keteranganTambahanJudul = null
       }
     }
   }
